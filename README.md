@@ -234,9 +234,7 @@ Here's the best parameter: 200
 n_estimators_best = min(results, key = results.get)
 ```
 
-#4. Predict the model
-
-#5. XGBoost
+# 4. XGBoost
 Define, fit and predict the model.
 ```
 from xgboost import XGBRegressor
@@ -266,61 +264,3 @@ print("Mean Absolute Error:" , mae_3)
 
 ```
 <img width="319" alt="image" src="https://user-images.githubusercontent.com/63503783/204996733-36f03afc-bdfa-4772-b875-875a24f4111a.png">
-
-
-
-
-
-
-
-# Clean out invalid data
-```
-data.dropna()
-```
-
-# Specify prediction target and features (X, y). Train the model and predict
-```
-y = data.SalePrice
-features = ['LotArea', 'YearBuilt', '1stFlrSF', '2ndFlrSF', 'FullBath', 'BedroomAbvGr', 'TotRmsAbvGrd']
-X = data[features]
-
-from sklearn.model_selection import train_test_split
-train_X, test_X, train_y, test_y = train_test_split(X, y, test_size = 0.3)
-
-from sklearn.tree import DecisionTreeRegressor
-
-data_model = DecisionTreeRegressor(random_state = 1)
-data_model.fit(train_X, train_y)
-
-prediction_y = data_model.predict(test_X)
-print(prediction_y)
-```
-<img width="579" alt="image" src="https://user-images.githubusercontent.com/63503783/203723681-1df0fba5-9ec2-4ca1-b3ce-54708877f99b.png">
-
-# Calculate the Mean Absolute Error in Validation Data
-```
-from sklearn.metrics import mean_absolute_error
-
-mae = mean_absolute_error(prediction_y, test_y)
-print(mae)
-```
-<img width="156" alt="image" src="https://user-images.githubusercontent.com/63503783/203723776-2269b4f4-d908-4d39-8f32-589dc3c83a32.png">
-
-# Find the optimal tree leaves based on lowest MAE
-```
-def get_mae(max_leaf_nodes, train_X, test_X, train_y, test_y):
-    
-    data_model = DecisionTreeRegressor(max_leaf_nodes = max_leaf_nodes, random_state = 0)
-    data_model.fit(train_X, train_y)
-    prediction_y = data_model.predict(test_X)
-    mae = mean_absolute_error(test_y, prediction_y)
-    
-    return mae
-
-leaves = [5, 25, 50, 100, 250, 500]
-score = {i: get_mae(i, train_X, test_X, train_y, test_y) for i in leaves}
-best_leaf = min(score, key = score.get)
-
-final_model = DecisionTreeRegressor(max_leaf_nodes = best_leaf, random_state=0)
-```
-
